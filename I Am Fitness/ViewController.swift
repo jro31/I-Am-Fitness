@@ -7,12 +7,29 @@
 //
 
 import UIKit
+import HealthKit
 
 class ViewController: UIViewController {
+    
+    let healthStore = HKHealthStore()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        if HKHealthStore.isHealthDataAvailable() {
+            // Add code to use HealthKit here.
+            requestWorkoutReadPermissions()
+        }
+    }
+    
+    func requestWorkoutReadPermissions() {
+        let workouts = Set([HKObjectType.workoutType(), HKQuantityType.workoutType()]) //This line selects 'workouts' as the data to be requested by users. I don't know why I've defined '.workoutType()' twice. It seems to work the same with one, the other, or both, so I just left it as both.
+        
+        healthStore.requestAuthorization(toShare: nil, read: workouts) { (success, error) in
+            if !success {
+                // Handle the error here.
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
