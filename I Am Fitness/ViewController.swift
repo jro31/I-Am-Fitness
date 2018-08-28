@@ -27,7 +27,25 @@ class ViewController: UIViewController {
         
         healthStore.requestAuthorization(toShare: nil, read: workouts) { (success, error) in
             if !success {
-                // Handle the error here.
+                let alert = UIAlertController(title: "Unable to read workouts", message: "Please go to Settings and allow I Am Fitness to view your workout data", preferredStyle: .alert)
+                
+                let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(okAction)
+                
+                let goToSettingsAction = UIAlertAction(title: "Go to Settings", style: .default) { (_) -> Void in
+                    guard let settingsURL = URL(string: UIApplicationOpenSettingsURLString) else {
+                        return
+                    }
+                    if UIApplication.shared.canOpenURL(settingsURL) {
+                        UIApplication.shared.open(settingsURL, completionHandler: { (success) in
+                            print("Settings opened: \(success)") // Prints true
+                        })
+                }
+            }
+                alert.addAction(goToSettingsAction)
+                
+                alert.preferredAction = goToSettingsAction
+                self.present(alert, animated: true)
             }
         }
     }
